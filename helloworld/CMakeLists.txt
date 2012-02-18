@@ -2,7 +2,8 @@ PROJECT("HelloWorld")
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-INCLUDE_DIRECTORIES(${BULLET_PHYSICS_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(/usr/local/include/bullet/)
+
 LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath)
 
 ADD_EXECUTABLE(main src/main.cpp )

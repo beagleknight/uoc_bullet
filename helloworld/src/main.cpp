@@ -85,6 +85,9 @@ void readKeyboard(unsigned char key, int x, int y)
     case 'w':
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       break;
+    case 'r':
+      pm->restart();
+      break;
     case '1':
       camera = &camera1;
       break;

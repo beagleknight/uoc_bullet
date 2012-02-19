@@ -8,6 +8,7 @@ void readKeyboard(unsigned char key, int x, int y);
 void readUpKeyboard(unsigned char key, int x, int y);
 void readSpecialKeyboard(int key, int x, int y);
 void readSpecialUpKeyboard(int key, int x, int y);
+void mouseMotion(int x, int y);
 void reshape(int w, int h);
 void init(int argc, char** argv);
 void update();
@@ -19,17 +20,22 @@ void render();
 PhysicsManager *pm = new PhysicsManager();
 Timer *timer = new Timer();
 static float g_lightPos[4] = { 0, 100, 0, 1 };  // Position of light
+int old_x = -1;
+int old_y = -1;
 
-Camera camera1(20, 50, 20, 
+Camera camera1(20, 100, 20, 
                0, 0, 0, 
                0, 1, 0);
-Camera camera2(10, 10, 0, 
+Camera camera2(20, 50, 20, 
+               0, 0, 0, 
+               0, 1, 0);
+Camera camera3(10, 10, 0, 
                0, 50, 0, 
                0, 1, 0);
-Camera camera3(-20, 30, -20, 
+Camera camera4(-20, 30, -20, 
                0, 0, 0, 
                0, 1, 0);
-Camera camera4(20, 100, 0, 
+Camera camera5(20, 100, 0, 
                0, 0, 0, 
                0, 1, 0);
 
@@ -55,6 +61,7 @@ int main (int argc, char** argv) {
   glutKeyboardUpFunc(readUpKeyboard);
   glutSpecialFunc(readSpecialKeyboard);
   glutSpecialUpFunc(readSpecialUpKeyboard);
+  glutPassiveMotionFunc(mouseMotion);
   glutReshapeFunc(reshape);
   glutDisplayFunc(render);
   glutIdleFunc(update);
@@ -90,6 +97,9 @@ void readKeyboard(unsigned char key, int x, int y)
     case '4':
       camera = &camera4;
       break;
+    case '5':
+      camera = &camera5;
+      break;
   }
 
   glutPostRedisplay();
@@ -102,12 +112,54 @@ void readUpKeyboard(unsigned char key, int x, int y)
 
 void readSpecialKeyboard(int key, int x, int y)
 {
+  float dx = 0;
+  float dy = 0;
+  float speed = 10;
+
+  switch(key)
+  {
+    case GLUT_KEY_LEFT:
+      dx -= speed;
+      break;
+    case GLUT_KEY_RIGHT:
+      dx += speed;
+      break;
+    case GLUT_KEY_UP:
+      dy -= speed;
+      break;
+    case GLUT_KEY_DOWN:
+      dy += speed;
+      break;
+  }
+
+  camera1.setEye(camera1.getEye().x + dx, camera1.getEye().y + dy, camera1.getEye().z);
+  camera1.setCenter(camera1.getCenter().x + dx, camera1.getCenter().y + dy, camera1.getCenter().z);
+
   glutPostRedisplay();
 }
 
 void readSpecialUpKeyboard(int key, int x, int y)
 {
   glutPostRedisplay();
+}
+
+void mouseMotion(int x, int y) 
+{
+  if(old_x == -1 && old_y == -1) {
+    old_x = x;
+    old_y = y;
+  }
+  else {
+    float dx = x - old_x;
+    float dy = y - old_y;
+    old_x = x;
+    old_y = y;
+
+    camera1.setCenter(camera1.getCenter().x + dx, camera1.getCenter().y + dy, camera1.getCenter().z);
+
+    //glutWarpPointer(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+  }
+  glutPostRedisplay(); 
 }
 
 void init(int argc, char** argv)
@@ -123,6 +175,8 @@ void init(int argc, char** argv)
 
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
+
+  glutSetCursor(GLUT_CURSOR_NONE);
 
   timer->init();
 }
@@ -215,6 +269,11 @@ void render()
 
   glPushMatrix();
   glTranslatef(camera4.getEye().x, camera4.getEye().y, camera4.getEye().z);
+  glutSolidCube(5.0f);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(camera5.getEye().x, camera5.getEye().y, camera5.getEye().z);
   glutSolidCube(5.0f);
   glPopMatrix();
 

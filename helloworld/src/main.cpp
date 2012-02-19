@@ -13,6 +13,7 @@ void reshape(int w, int h);
 void init(int argc, char** argv);
 void update();
 void render();
+void godCamera();
 
 #define GAME_WIDTH 640
 #define GAME_HEIGHT 480
@@ -23,9 +24,6 @@ static float g_lightPos[4] = { 0, 100, 0, 1 };  // Position of light
 int old_x = -1;
 int old_y = -1;
 
-Camera camera1(20, 100, 20, 
-               0, 0, 0, 
-               0, 1, 0);
 Camera camera2(20, 50, 20, 
                0, 0, 0, 
                0, 1, 0);
@@ -39,7 +37,12 @@ Camera camera5(20, 100, 0,
                0, 0, 0, 
                0, 1, 0);
 
-Camera *camera = &camera1;
+Camera *camera = &camera2;
+
+//angle of rotation
+float xpos = 0, ypos = 0, zpos = 0, xrot = 0, yrot = 0;
+float lastx, lasty;
+bool usingGodCamera = false;
 
 int main (int argc, char** argv) {
   int res_x, res_y, pos_x, pos_y;
@@ -89,19 +92,23 @@ void readKeyboard(unsigned char key, int x, int y)
       pm->restart();
       break;
     case '1':
-      camera = &camera1;
+      usingGodCamera = true;
       break;
     case '2':
       camera = &camera2;
+      usingGodCamera = false;
       break;
     case '3':
       camera = &camera3;
+      usingGodCamera = false;
       break;
     case '4':
       camera = &camera4;
+      usingGodCamera = false;
       break;
     case '5':
       camera = &camera5;
+      usingGodCamera = false;
       break;
   }
 
@@ -115,28 +122,35 @@ void readUpKeyboard(unsigned char key, int x, int y)
 
 void readSpecialKeyboard(int key, int x, int y)
 {
-  float dx = 0;
-  float dy = 0;
-  float speed = 10;
+  float xrotrad, yrotrad;
 
   switch(key)
   {
     case GLUT_KEY_LEFT:
-      dx -= speed;
+      yrotrad = (yrot / 180 * 3.141592654f);
+      xpos -= float(cos(yrotrad)) * 0.2;
+      zpos -= float(sin(yrotrad)) * 0.2;
       break;
     case GLUT_KEY_RIGHT:
-      dx += speed;
+      yrotrad = (yrot / 180 * 3.141592654f);
+      xpos += float(cos(yrotrad)) * 0.2;
+      zpos += float(sin(yrotrad)) * 0.2;
       break;
     case GLUT_KEY_UP:
-      dy -= speed;
+      yrotrad = (yrot / 180 * 3.141592654f);
+      xrotrad = (xrot / 180 * 3.141592654f); 
+      xpos += float(sin(yrotrad)) ;
+      zpos -= float(cos(yrotrad)) ;
+      ypos -= float(sin(xrotrad)) ;
       break;
     case GLUT_KEY_DOWN:
-      dy += speed;
+      yrotrad = (yrot / 180 * 3.141592654f);
+      xrotrad = (xrot / 180 * 3.141592654f); 
+      xpos -= float(sin(yrotrad));
+      zpos += float(cos(yrotrad)) ;
+      ypos += float(sin(xrotrad));
       break;
   }
-
-  camera1.setEye(camera1.getEye().x + dx, camera1.getEye().y + dy, camera1.getEye().z);
-  camera1.setCenter(camera1.getCenter().x + dx, camera1.getCenter().y + dy, camera1.getCenter().z);
 
   glutPostRedisplay();
 }
@@ -148,20 +162,13 @@ void readSpecialUpKeyboard(int key, int x, int y)
 
 void mouseMotion(int x, int y) 
 {
-  if(old_x == -1 && old_y == -1) {
-    old_x = x;
-    old_y = y;
-  }
-  else {
-    float dx = x - old_x;
-    float dy = y - old_y;
-    old_x = x;
-    old_y = y;
+  int diffx=x-lastx; //check the difference between the current x and the last x position
+  int diffy=y-lasty; //check the difference between the current y and the last y position
+  lastx=x; //set lastx to the current x position
+  lasty=y; //set lasty to the current y position
+  xrot += (float) diffy; //set the xrot to xrot with the addition of the difference in the y position
+  yrot += (float) diffx;    //set the xrot to yrot with the addition of the difference in the x position
 
-    camera1.setCenter(camera1.getCenter().x + dx, camera1.getCenter().y + dy, camera1.getCenter().z);
-
-    //glutWarpPointer(GAME_WIDTH / 2, GAME_HEIGHT / 2);
-  }
   glutPostRedisplay(); 
 }
 
@@ -197,9 +204,7 @@ void reshape(int w, int h)
   glLoadIdentity();
   gluPerspective(90,aspectRatio,1,1000);
 
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  camera->place();
+  glMatrixMode (GL_MODELVIEW);
 
   glutPostRedisplay();
 }
@@ -219,7 +224,10 @@ void render()
   glClear(GL_COLOR_BUFFER_BIT);
   glLoadIdentity();
 
-  camera->place();
+  if(usingGodCamera)
+    godCamera();
+  else
+    camera->place();
 
   glLightfv(GL_LIGHT0, GL_POSITION, g_lightPos);
 
@@ -256,11 +264,6 @@ void render()
   glColor3f(0.0f, 0.0f, 1.0f);
 
   glPushMatrix();
-  glTranslatef(camera1.getEye().x, camera1.getEye().y, camera1.getEye().z);
-  glutSolidCube(5.0f);
-  glPopMatrix();
-
-  glPushMatrix();
   glTranslatef(camera2.getEye().x, camera2.getEye().y, camera2.getEye().z);
   glutSolidCube(5.0f);
   glPopMatrix();
@@ -282,3 +285,10 @@ void render()
 
   glutSwapBuffers();
 }
+
+void godCamera () {
+  glRotatef(xrot,1.0,0.0,0.0);  //rotate our camera on the x-axis (left and right)
+  glRotatef(yrot,0.0,1.0,0.0);  //rotate our camera on the y-axis (up and down)
+  glTranslated(-xpos,-ypos,-zpos); //translate the screen to the position of our camera
+}
+

@@ -4,9 +4,14 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 INCLUDE_DIRECTORIES(/usr/local/include/bullet/)
 
-LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath)
+ADD_LIBRARY(physics_manager SHARED src/physics_manager.cpp)
 
 ADD_EXECUTABLE(main src/main.cpp )
+
+TARGET_LINK_LIBRARIES(main physics_manager)
+TARGET_LINK_LIBRARIES(main BulletDynamics)
+TARGET_LINK_LIBRARIES(main BulletCollision)
+TARGET_LINK_LIBRARIES(main LinearMath)
 
 IF (INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES)
   SET_TARGET_PROPERTIES(main PROPERTIES  DEBUG_POSTFIX "_Debug")

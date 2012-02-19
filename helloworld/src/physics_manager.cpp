@@ -26,7 +26,7 @@ PhysicsManager::PhysicsManager()
   dynamicsWorld->addRigidBody(groundRigidBody);
 
   // Create a sphere shape with radius = 1m at Y = 50
-  fallShape = new btSphereShape(1);
+  fallShape = new btSphereShape(5);
   fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,50,0)));
   // Create a sphere body with 1kg mass
   btScalar mass = 1;
@@ -60,15 +60,15 @@ PhysicsManager::~PhysicsManager()
   delete broadphase;
 }
 
-void PhysicsManager::simulate()
+void PhysicsManager::simulate(float dt)
 {
-  dynamicsWorld->stepSimulation(1/60.f,10);
+  dynamicsWorld->stepSimulation(dt,10);
 }
 
 
-float PhysicsManager::getSpherePosition()
+Vector3 PhysicsManager::getSpherePosition()
 {
   btTransform trans;
   fallRigidBody->getMotionState()->getWorldTransform(trans);
-  return trans.getOrigin().getY();
+  return Vector3(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
 }

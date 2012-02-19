@@ -4,16 +4,22 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 INCLUDE_DIRECTORIES(/usr/local/include/bullet/)
 
+ADD_LIBRARY(vector3 SHARED src/vector3.cpp)
+ADD_LIBRARY(camera SHARED src/camera.cpp)
 ADD_LIBRARY(physics_manager SHARED src/physics_manager.cpp)
+ADD_LIBRARY(timer SHARED src/timer.cpp)
 
 ADD_EXECUTABLE(main src/main.cpp )
 
+TARGET_LINK_LIBRARIES(main camera)
+TARGET_LINK_LIBRARIES(main vector3)
 TARGET_LINK_LIBRARIES(main physics_manager)
 TARGET_LINK_LIBRARIES(main BulletDynamics)
 TARGET_LINK_LIBRARIES(main BulletCollision)
 TARGET_LINK_LIBRARIES(main LinearMath)
 TARGET_LINK_LIBRARIES(main glut)
 TARGET_LINK_LIBRARIES(main GLU)
+TARGET_LINK_LIBRARIES(main timer)
 
 IF (INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES)
   SET_TARGET_PROPERTIES(main PROPERTIES  DEBUG_POSTFIX "_Debug")

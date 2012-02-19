@@ -1,13 +1,14 @@
 #include <iostream>
 #include <btBulletDynamicsCommon.h>
+#include "vector3.hpp"
 
 class PhysicsManager 
 {
   public:
     PhysicsManager();
     ~PhysicsManager();
-    void simulate();
-    float getSpherePosition();
+    void simulate(float dt);
+    Vector3 getSpherePosition();
   private:
     btBroadphaseInterface* broadphase;
     btDefaultCollisionConfiguration* collisionConfiguration;

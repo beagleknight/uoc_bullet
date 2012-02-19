@@ -63,10 +63,12 @@ PhysicsManager::~PhysicsManager()
 void PhysicsManager::simulate()
 {
   dynamicsWorld->stepSimulation(1/60.f,10);
-
-  btTransform trans;
-  fallRigidBody->getMotionState()->getWorldTransform(trans);
-
-  std::cout << "sphere height: " << trans.getOrigin().getY() << std::endl;
 }
 
+
+float PhysicsManager::getSpherePosition()
+{
+  btTransform trans;
+  fallRigidBody->getMotionState()->getWorldTransform(trans);
+  return trans.getOrigin().getY();
+}

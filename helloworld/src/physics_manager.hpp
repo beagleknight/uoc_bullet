@@ -7,6 +7,7 @@ class PhysicsManager
     PhysicsManager();
     ~PhysicsManager();
     void simulate();
+    float getSpherePosition();
   private:
     btBroadphaseInterface* broadphase;
     btDefaultCollisionConfiguration* collisionConfiguration;

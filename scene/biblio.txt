@@ -1,0 +1,2 @@
+HelloWorld Bullet: http://bulletphysics.org/mediawiki-1.5.8/index.php/Hello_World
+Glut camera example: http://www.swiftless.com/tutorials/opengl/camera2.html

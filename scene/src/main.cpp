@@ -5,12 +5,7 @@
 #include <vector>
 #include <GL/glut.h>
 
-#include "physics_manager.hpp"
-#include "timer.hpp"
-#include "camera.hpp"
-#include "entity.hpp"
-#include "sphere.hpp"
-#include "box.hpp"
+#include "game.hpp"
 
 void readKeyboard(unsigned char key, int x, int y);
 void readUpKeyboard(unsigned char key, int x, int y);
@@ -26,12 +21,8 @@ void godCamera();
 #define GAME_WIDTH 640
 #define GAME_HEIGHT 480
 
-PhysicsManager *pm = new PhysicsManager();
+Game game;
 
-std::vector<Entity*> entities;
-std::vector<Entity*>::iterator it;
-
-Timer *timer = new Timer();
 static float g_lightPos[4] = { 0, 100, 0, 1 };  // Position of light
 int old_x = -1;
 int old_y = -1;
@@ -88,16 +79,8 @@ int main (int argc, char** argv) {
 
 void readKeyboard(unsigned char key, int x, int y)
 {
-  Sphere *sphere;
-  Box *box;
-  int randx, randz;
-  randx = rand() % 50 + 1;
-  randz = rand() % 50 + 1;
-
   switch(key) {
     case 27:
-      delete pm;
-      delete timer;
       exit(0);
       break;
     case 's':
@@ -105,14 +88,6 @@ void readKeyboard(unsigned char key, int x, int y)
       break;
     case 'w':
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      break;
-    case 'z':
-      sphere = new Sphere(pm, Vector3(randx, 50, randz), 5);
-      entities.push_back(sphere);
-      break;
-    case 'x':
-      box = new Box(pm, Vector3(randx, 50, randz), Vector3(5, 5, 5));
-      entities.push_back(box);
       break;
     case '1':
       usingGodCamera = true;
@@ -133,8 +108,9 @@ void readKeyboard(unsigned char key, int x, int y)
       camera = &camera5;
       usingGodCamera = false;
       break;
+    default:
+      game.input(key, x, y);
   }
-
   glutPostRedisplay();
 }
 
@@ -185,18 +161,20 @@ void readSpecialUpKeyboard(int key, int x, int y)
 
 void mouseMotion(int x, int y) 
 {
-  int diffx=x-lastx; //check the difference between the current x and the last x position
-  int diffy=y-lasty; //check the difference between the current y and the last y position
-  lastx=x; //set lastx to the current x position
-  lasty=y; //set lasty to the current y position
-  xrot += (float) diffy; //set the xrot to xrot with the addition of the difference in the y position
-  yrot += (float) diffx;    //set the xrot to yrot with the addition of the difference in the x position
+  int diffx=x-lastx;
+  int diffy=y-lasty;
+  lastx=x;
+  lasty=y;
+  xrot += (float) diffy;
+  yrot += (float) diffx;
 
   glutPostRedisplay(); 
 }
 
 void init(int argc, char** argv)
 {
+  srand(time(NULL));
+
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
   glAlphaFunc(GL_GREATER, 0.05f);
@@ -211,9 +189,7 @@ void init(int argc, char** argv)
 
   glutSetCursor(GLUT_CURSOR_NONE);
 
-  timer->init();
-
-  srand(time(NULL));
+  game.init();
 }
 
 void reshape(int w, int h)
@@ -236,9 +212,7 @@ void reshape(int w, int h)
 
 void update()
 {
-  float dt = timer->tick();
-  pm->simulate(dt);
-
+  game.update();
   glutPostRedisplay();
 }
 
@@ -276,14 +250,7 @@ void render()
   glVertex3f(-50, 0, -50);
   glEnd();
 
-  // Draw entities
-  for(it = entities.begin(); it != entities.end(); it++)
-  {
-    glPushMatrix();
-    glTranslatef((*it)->getPosition().x, (*it)->getPosition().y, (*it)->getPosition().z);
-    (*it)->render();
-    glPopMatrix();
-  }
+  game.render();
 
   glutSwapBuffers();
 }
@@ -293,4 +260,3 @@ void godCamera () {
   glRotatef(yrot,0.0,1.0,0.0);  //rotate our camera on the y-axis (up and down)
   glTranslated(-xpos,-ypos,-zpos); //translate the screen to the position of our camera
 }
-

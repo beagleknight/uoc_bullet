@@ -13,6 +13,7 @@ ADD_LIBRARY(timer SHARED src/timer.cpp)
 ADD_LIBRARY(entity SHARED src/entity.cpp)
 ADD_LIBRARY(sphere SHARED src/sphere.cpp)
 ADD_LIBRARY(box SHARED src/box.cpp)
+ADD_LIBRARY(game SHARED src/game.cpp)
 
 ADD_EXECUTABLE(main src/main.cpp )
 
@@ -28,6 +29,7 @@ TARGET_LINK_LIBRARIES(main timer)
 TARGET_LINK_LIBRARIES(main entity)
 TARGET_LINK_LIBRARIES(main sphere)
 TARGET_LINK_LIBRARIES(main box)
+TARGET_LINK_LIBRARIES(main game)
 
 IF (INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES)
   SET_TARGET_PROPERTIES(main PROPERTIES  DEBUG_POSTFIX "_Debug")

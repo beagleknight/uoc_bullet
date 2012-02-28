@@ -1,3 +1,6 @@
+#ifndef CLASS_PHYSICS_MANAGER_H
+#define CLASS_PHYSICS_MANAGER_H
+
 #include <iostream>
 #include <btBulletDynamicsCommon.h>
 #include "vector3.hpp"
@@ -8,8 +11,8 @@ class PhysicsManager
     PhysicsManager();
     ~PhysicsManager();
     void simulate(float dt);
-    Vector3 getSpherePosition();
-    void restart();
+    btRigidBody* createSphereBody(int radius, Vector3 position);
+    void removeRigidBody(btRigidBody* body);
   private:
     btBroadphaseInterface* broadphase;
     btDefaultCollisionConfiguration* collisionConfiguration;
@@ -20,7 +23,6 @@ class PhysicsManager
     btCollisionShape* groundShape;
     btDefaultMotionState* groundMotionState;
     btRigidBody* groundRigidBody;
-    btCollisionShape* fallShape;
-    btDefaultMotionState* fallMotionState;
-    btRigidBody* fallRigidBody;
 };
+
+#endif

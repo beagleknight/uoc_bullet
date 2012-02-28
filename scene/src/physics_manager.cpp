@@ -25,27 +25,10 @@ PhysicsManager::PhysicsManager()
   // Add ground to the world
   dynamicsWorld->addRigidBody(groundRigidBody);
 
-  // Create a sphere shape with radius = 1m at Y = 50
-  fallShape = new btSphereShape(5);
-  fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,50,0)));
-  // Create a sphere body with 1kg mass
-  btScalar mass = 1;
-  btVector3 fallInertia(0,0,0);
-  fallShape->calculateLocalInertia(mass,fallInertia);
-  btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass,fallMotionState,fallShape,fallInertia);
-  fallRigidBody = new btRigidBody(fallRigidBodyCI);
-  // Add sphere to the world
-  dynamicsWorld->addRigidBody(fallRigidBody);
 }
 
 PhysicsManager::~PhysicsManager()
 {
-  // Delete sphere
-  dynamicsWorld->removeRigidBody(fallRigidBody);
-  delete fallRigidBody->getMotionState();
-  delete fallRigidBody;
-  delete fallShape;
-
   // Delete ground
   dynamicsWorld->removeRigidBody(groundRigidBody);
   delete groundRigidBody->getMotionState();
@@ -65,23 +48,17 @@ void PhysicsManager::simulate(float dt)
   dynamicsWorld->stepSimulation(dt,10);
 }
 
-
-Vector3 PhysicsManager::getSpherePosition()
+btRigidBody* PhysicsManager::createSphereBody(int radius, Vector3 position)
 {
-  btTransform trans;
-  fallRigidBody->getMotionState()->getWorldTransform(trans);
-  return Vector3(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
-}
+  btCollisionShape* fallShape;
+  btDefaultMotionState* fallMotionState;
+  btRigidBody* fallRigidBody;
 
-void PhysicsManager::restart()
-{
-  dynamicsWorld->removeRigidBody(fallRigidBody);
-  delete fallRigidBody->getMotionState();
-  delete fallRigidBody;
-  delete fallShape;
+  // Create a sphere shape
+  fallShape = new btSphereShape(radius);
+  fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
+                                             btVector3(position.x,position.y,position.z)));
 
-  fallShape = new btSphereShape(5);
-  fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,50,0)));
   // Create a sphere body with 1kg mass
   btScalar mass = 1;
   btVector3 fallInertia(0,0,0);
@@ -90,4 +67,13 @@ void PhysicsManager::restart()
   fallRigidBody = new btRigidBody(fallRigidBodyCI);
   // Add sphere to the world
   dynamicsWorld->addRigidBody(fallRigidBody);
+}
+
+void PhysicsManager::removeRigidBody(btRigidBody* body)
+{
+  // Delete sphere
+  dynamicsWorld->removeRigidBody(body);
+  delete body->getCollisionShape();
+  delete body->getMotionState();
+  delete body;
 }

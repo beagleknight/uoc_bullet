@@ -1,8 +1,12 @@
 #include <stdlib.h>
+#include <iostream>
+#include <vector>
 #include <GL/glut.h>
+
 #include "physics_manager.hpp"
 #include "timer.hpp"
 #include "camera.hpp"
+#include "sphere.hpp"
 
 void readKeyboard(unsigned char key, int x, int y);
 void readUpKeyboard(unsigned char key, int x, int y);
@@ -19,10 +23,14 @@ void godCamera();
 #define GAME_HEIGHT 480
 
 PhysicsManager *pm = new PhysicsManager();
+
+std::vector<Sphere*> spheres;
+std::vector<Sphere*>::iterator it;
+
 Timer *timer = new Timer();
 static float g_lightPos[4] = { 0, 100, 0, 1 };  // Position of light
 int old_x = -1;
-int old_y = -1;
+int old_y = -1
 
 Camera camera2(20, 50, 20, 
                0, 0, 0, 
@@ -76,6 +84,8 @@ int main (int argc, char** argv) {
 
 void readKeyboard(unsigned char key, int x, int y)
 {
+  Sphere *sphere;
+
   switch(key) {
     case 27:
       delete pm;
@@ -88,9 +98,9 @@ void readKeyboard(unsigned char key, int x, int y)
     case 'w':
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       break;
-    case 'r':
-      pm->restart();
-      break;
+    case 'z':
+      sphere = new Sphere(pm, 10, Vector3(0, 50, 0));
+      spheres.push_back(sphere);
     case '1':
       usingGodCamera = true;
       break;
@@ -214,8 +224,6 @@ void update()
   float dt = timer->tick();
   pm->simulate(dt);
 
-  camera3.setCenter(pm->getSpherePosition().x, pm->getSpherePosition().y, pm->getSpherePosition().z);
-
   glutPostRedisplay();
 }
 
@@ -255,33 +263,14 @@ void render()
 
   // Draw sphere
   glColor3f(1.0f, 0.3f, 0.3f);
-  glPushMatrix();
-  glTranslatef(0.0f, pm->getSpherePosition().y, 0.0f);
-  glutSolidSphere(5.0f, 10, 10); 
-  glPopMatrix();
-
-  // Draw cameras
-  glColor3f(0.0f, 0.0f, 1.0f);
-
-  glPushMatrix();
-  glTranslatef(camera2.getEye().x, camera2.getEye().y, camera2.getEye().z);
-  glutSolidCube(5.0f);
-  glPopMatrix();
-
-  glPushMatrix();
-  glTranslatef(camera3.getEye().x, camera3.getEye().y, camera3.getEye().z);
-  glutSolidCube(5.0f);
-  glPopMatrix();
-
-  glPushMatrix();
-  glTranslatef(camera4.getEye().x, camera4.getEye().y, camera4.getEye().z);
-  glutSolidCube(5.0f);
-  glPopMatrix();
-
-  glPushMatrix();
-  glTranslatef(camera5.getEye().x, camera5.getEye().y, camera5.getEye().z);
-  glutSolidCube(5.0f);
-  glPopMatrix();
+  for(it = spheres.begin(); it != spheres.end(); it++)
+  {
+    glPushMatrix();
+    glTranslatef((*it)->getPosition().x, (*it)->getPosition().y, (*it)->getPosition().z);
+    glutSolidSphere(5.0f, 10, 10); 
+    glPopMatrix();
+  }
+  
 
   glutSwapBuffers();
 }

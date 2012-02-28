@@ -7,12 +7,14 @@
 class Sphere
 {
   public:
-    Sphere(PhysicsManager* _pm, int radius, Vector3 position);
+    Sphere(PhysicsManager* _pm, int _radius, Vector3 position);
     ~Sphere();
     Vector3 getPosition();
+    int getRadius();
   private:
     PhysicsManager* pm;
     btRigidBody* body;
+    int radius;
 };
 
 #endif

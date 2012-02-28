@@ -2,6 +2,8 @@ PROJECT("Scene")
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 INCLUDE_DIRECTORIES(/usr/local/include/bullet/)
 
 ADD_LIBRARY(vector3 SHARED src/vector3.cpp)
@@ -9,6 +11,7 @@ ADD_LIBRARY(camera SHARED src/camera.cpp)
 ADD_LIBRARY(physics_manager SHARED src/physics_manager.cpp)
 ADD_LIBRARY(timer SHARED src/timer.cpp)
 ADD_LIBRARY(sphere SHARED src/sphere.cpp)
+ADD_LIBRARY(box SHARED src/box.cpp)
 
 ADD_EXECUTABLE(main src/main.cpp )
 
@@ -22,6 +25,7 @@ TARGET_LINK_LIBRARIES(main glut)
 TARGET_LINK_LIBRARIES(main GLU)
 TARGET_LINK_LIBRARIES(main timer)
 TARGET_LINK_LIBRARIES(main sphere)
+TARGET_LINK_LIBRARIES(main box)
 
 IF (INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES)
   SET_TARGET_PROPERTIES(main PROPERTIES  DEBUG_POSTFIX "_Debug")

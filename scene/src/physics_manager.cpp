@@ -67,6 +67,31 @@ btRigidBody* PhysicsManager::createSphereBody(int radius, Vector3 position)
   fallRigidBody = new btRigidBody(fallRigidBodyCI);
   // Add sphere to the world
   dynamicsWorld->addRigidBody(fallRigidBody);
+
+  return fallRigidBody;
+}
+
+btRigidBody* PhysicsManager::createBoxBody(Vector3 dimension, Vector3 position)
+{
+  btCollisionShape* fallShape;
+  btDefaultMotionState* fallMotionState;
+  btRigidBody* fallRigidBody;
+
+  // Create a box shape
+  fallShape = new btBoxShape(btVector3(dimension.x, dimension.y, dimension.z));
+  fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
+                                             btVector3(position.x,position.y,position.z)));
+
+  // Create a sphere body with 1kg mass
+  btScalar mass = 1;
+  btVector3 fallInertia(0,0,0);
+  fallShape->calculateLocalInertia(mass,fallInertia);
+  btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass,fallMotionState,fallShape,fallInertia);
+  fallRigidBody = new btRigidBody(fallRigidBodyCI);
+  // Add sphere to the world
+  dynamicsWorld->addRigidBody(fallRigidBody);
+
+  return fallRigidBody;
 }
 
 void PhysicsManager::removeRigidBody(btRigidBody* body)

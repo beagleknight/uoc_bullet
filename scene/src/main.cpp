@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <iostream>
 #include <vector>
 #include <GL/glut.h>
@@ -7,6 +9,7 @@
 #include "timer.hpp"
 #include "camera.hpp"
 #include "sphere.hpp"
+#include "box.hpp"
 
 void readKeyboard(unsigned char key, int x, int y);
 void readUpKeyboard(unsigned char key, int x, int y);
@@ -25,12 +28,14 @@ void godCamera();
 PhysicsManager *pm = new PhysicsManager();
 
 std::vector<Sphere*> spheres;
-std::vector<Sphere*>::iterator it;
+std::vector<Sphere*>::iterator its;
+std::vector<Box*> boxes;
+std::vector<Box*>::iterator itb;
 
 Timer *timer = new Timer();
 static float g_lightPos[4] = { 0, 100, 0, 1 };  // Position of light
 int old_x = -1;
-int old_y = -1
+int old_y = -1;
 
 Camera camera2(20, 50, 20, 
                0, 0, 0, 
@@ -66,7 +71,7 @@ int main (int argc, char** argv) {
 
   glutInitWindowPosition(pos_x,pos_y);
   glutInitWindowSize(GAME_WIDTH, GAME_HEIGHT);
-  glutCreateWindow("Bullet: HelloWorld");
+  glutCreateWindow("Bullet: Scene");
 
   glutKeyboardFunc(readKeyboard);
   glutKeyboardUpFunc(readUpKeyboard);
@@ -85,6 +90,10 @@ int main (int argc, char** argv) {
 void readKeyboard(unsigned char key, int x, int y)
 {
   Sphere *sphere;
+  Box *box;
+  int randx, randz;
+  randx = rand() % 50 + 1;
+  randz = rand() % 50 + 1;
 
   switch(key) {
     case 27:
@@ -99,8 +108,13 @@ void readKeyboard(unsigned char key, int x, int y)
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       break;
     case 'z':
-      sphere = new Sphere(pm, 10, Vector3(0, 50, 0));
+      sphere = new Sphere(pm, 5, Vector3(randx, 50, randz));
       spheres.push_back(sphere);
+      break;
+    case 'x':
+      box = new Box(pm, Vector3(5, 5, 5), Vector3(randx, 50, randz));
+      boxes.push_back(box);
+      break;
     case '1':
       usingGodCamera = true;
       break;
@@ -199,6 +213,8 @@ void init(int argc, char** argv)
   glutSetCursor(GLUT_CURSOR_NONE);
 
   timer->init();
+
+  srand(time(NULL));
 }
 
 void reshape(int w, int h)
@@ -261,16 +277,25 @@ void render()
   glVertex3f(-50, 0, -50);
   glEnd();
 
-  // Draw sphere
+  // Draw spheres
   glColor3f(1.0f, 0.3f, 0.3f);
-  for(it = spheres.begin(); it != spheres.end(); it++)
+  for(its = spheres.begin(); its != spheres.end(); its++)
   {
     glPushMatrix();
-    glTranslatef((*it)->getPosition().x, (*it)->getPosition().y, (*it)->getPosition().z);
-    glutSolidSphere(5.0f, 10, 10); 
+    glTranslatef((*its)->getPosition().x, (*its)->getPosition().y, (*its)->getPosition().z);
+    glutSolidSphere((*its)->getRadius(), 10, 10); 
     glPopMatrix();
   }
-  
+
+  // Draw boxes
+  glColor3f(0.3f, 1.0f, 0.3f);
+  for(itb = boxes.begin(); itb != boxes.end(); itb++)
+  {
+    glPushMatrix();
+    glTranslatef((*itb)->getPosition().x, (*itb)->getPosition().y, (*itb)->getPosition().z);
+    glutSolidCube((*itb)->getDimension().x);
+    glPopMatrix();
+  }
 
   glutSwapBuffers();
 }

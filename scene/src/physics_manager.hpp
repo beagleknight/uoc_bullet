@@ -13,6 +13,7 @@ class PhysicsManager
     void simulate(float dt);
     btRigidBody* createSphereBody(int radius, Vector3 position);
     btRigidBody* createBoxBody(Vector3 dimension, Vector3 position);
+    btRigidBody* createRigidBody(btCollisionShape* shape, Vector3 position);
     void removeRigidBody(btRigidBody* body);
   private:
     btBroadphaseInterface* broadphase;

@@ -18,3 +18,8 @@ Vector3::~Vector3()
 {
 
 }
+
+btVector3 Vector3::toBtVector3()
+{
+  return btVector3(x, y, z);
+}

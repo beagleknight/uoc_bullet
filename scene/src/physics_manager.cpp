@@ -50,48 +50,31 @@ void PhysicsManager::simulate(float dt)
 
 btRigidBody* PhysicsManager::createSphereBody(int radius, Vector3 position)
 {
-  btCollisionShape* fallShape;
-  btDefaultMotionState* fallMotionState;
-  btRigidBody* fallRigidBody;
-
-  // Create a sphere shape
-  fallShape = new btSphereShape(radius);
-  fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
-                                             btVector3(position.x,position.y,position.z)));
-
-  // Create a sphere body with 1kg mass
-  btScalar mass = 1;
-  btVector3 fallInertia(0,0,0);
-  fallShape->calculateLocalInertia(mass,fallInertia);
-  btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass,fallMotionState,fallShape,fallInertia);
-  fallRigidBody = new btRigidBody(fallRigidBodyCI);
-  // Add sphere to the world
-  dynamicsWorld->addRigidBody(fallRigidBody);
-
-  return fallRigidBody;
+  return createRigidBody(new btSphereShape(radius), position);
 }
 
 btRigidBody* PhysicsManager::createBoxBody(Vector3 dimension, Vector3 position)
 {
-  btCollisionShape* fallShape;
-  btDefaultMotionState* fallMotionState;
-  btRigidBody* fallRigidBody;
+  return createRigidBody(new btBoxShape(dimension.toBtVector3()), position);
+}
 
-  // Create a box shape
-  fallShape = new btBoxShape(btVector3(dimension.x, dimension.y, dimension.z));
-  fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
-                                             btVector3(position.x,position.y,position.z)));
+btRigidBody* PhysicsManager::createRigidBody(btCollisionShape* shape, Vector3 position)
+{
+  btDefaultMotionState* motionState;
+  btRigidBody* rigidBody;
 
-  // Create a sphere body with 1kg mass
-  btScalar mass = 1;
-  btVector3 fallInertia(0,0,0);
-  fallShape->calculateLocalInertia(mass,fallInertia);
-  btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass,fallMotionState,fallShape,fallInertia);
-  fallRigidBody = new btRigidBody(fallRigidBodyCI);
-  // Add sphere to the world
-  dynamicsWorld->addRigidBody(fallRigidBody);
+  motionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
+                                         position.toBtVector3()));
 
-  return fallRigidBody;
+  btScalar mass = 1; // 1kg
+  btVector3 inertia(0,0,0);
+  shape->calculateLocalInertia(mass,inertia);
+
+  btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass,motionState,shape,inertia);
+  rigidBody = new btRigidBody(rigidBodyCI);
+
+  dynamicsWorld->addRigidBody(rigidBody);
+  return rigidBody;
 }
 
 void PhysicsManager::removeRigidBody(btRigidBody* body)

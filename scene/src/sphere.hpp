@@ -1,19 +1,20 @@
 #ifndef CLASS_SPHERE_H
 #define CLASS_SPHERE_H
 
-#include "physics_manager.hpp"
+#include <GL/glut.h>
+#include "entity.hpp"
 #include "vector3.hpp"
 
-class Sphere
+class Sphere : public Entity
 {
   public:
-    Sphere(PhysicsManager* _pm, int _radius, Vector3 position);
+    Sphere(PhysicsManager* _pm, Vector3 position, int radius);
     ~Sphere();
-    Vector3 getPosition();
+    void render();
+    void update(float dt);
     int getRadius();
   private:
-    PhysicsManager* pm;
-    btRigidBody* body;
+    void createBody(Vector3 position);
     int radius;
 };
 

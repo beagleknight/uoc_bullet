@@ -1,19 +1,20 @@
 #ifndef CLASS_BOX_H
 #define CLASS_BOX_H
 
-#include "physics_manager.hpp"
+#include <GL/glut.h>
+#include "entity.hpp"
 #include "vector3.hpp"
 
-class Box
+class Box : public Entity
 {
   public:
-    Box(PhysicsManager* _pm, Vector3 _dimension, Vector3 position);
+    Box(PhysicsManager* _pm, Vector3 position, Vector3 _dimension);
     ~Box();
-    Vector3 getPosition();
+    void render();
+    void update(float dt);
     Vector3 getDimension();
   private:
-    PhysicsManager* pm;
-    btRigidBody* body;
+    void createBody(Vector3 position);
     Vector3 dimension;
 };
 

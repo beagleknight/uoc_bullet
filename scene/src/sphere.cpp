@@ -1,23 +1,28 @@
 #include "sphere.hpp"
 
-Sphere::Sphere(PhysicsManager* _pm, int _radius, Vector3 position)
+Sphere::Sphere(PhysicsManager* _pm, Vector3 position, int _radius) : Entity(_pm)
 {
-  pm = _pm;
   radius = _radius;
-  body = pm->createSphereBody(radius, position);
+  createBody(position);
 }
 
 Sphere::~Sphere()
 {
-  if(body != 0)
-    pm->removeRigidBody(body);
 }
 
-Vector3 Sphere::getPosition()
+void Sphere::createBody(Vector3 position)
 {
-  btTransform trans;
-  body->getMotionState()->getWorldTransform(trans);
-  return Vector3(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
+  body = pm->createSphereBody(radius, position);
+}
+
+void Sphere::render()
+{
+  glColor3f(color.x, color.y, color.z);
+  glutSolidSphere(radius, 10, 10); 
+}
+
+void Sphere::update(float dt)
+{
 }
 
 int Sphere::getRadius()

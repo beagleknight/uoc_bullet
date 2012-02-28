@@ -8,6 +8,7 @@
 #include "physics_manager.hpp"
 #include "timer.hpp"
 #include "camera.hpp"
+#include "entity.hpp"
 #include "sphere.hpp"
 #include "box.hpp"
 
@@ -27,10 +28,8 @@ void godCamera();
 
 PhysicsManager *pm = new PhysicsManager();
 
-std::vector<Sphere*> spheres;
-std::vector<Sphere*>::iterator its;
-std::vector<Box*> boxes;
-std::vector<Box*>::iterator itb;
+std::vector<Entity*> entities;
+std::vector<Entity*>::iterator it;
 
 Timer *timer = new Timer();
 static float g_lightPos[4] = { 0, 100, 0, 1 };  // Position of light
@@ -108,12 +107,12 @@ void readKeyboard(unsigned char key, int x, int y)
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       break;
     case 'z':
-      sphere = new Sphere(pm, 5, Vector3(randx, 50, randz));
-      spheres.push_back(sphere);
+      sphere = new Sphere(pm, Vector3(randx, 50, randz), 5);
+      entities.push_back(sphere);
       break;
     case 'x':
-      box = new Box(pm, Vector3(5, 5, 5), Vector3(randx, 50, randz));
-      boxes.push_back(box);
+      box = new Box(pm, Vector3(randx, 50, randz), Vector3(5, 5, 5));
+      entities.push_back(box);
       break;
     case '1':
       usingGodCamera = true;
@@ -277,23 +276,12 @@ void render()
   glVertex3f(-50, 0, -50);
   glEnd();
 
-  // Draw spheres
-  glColor3f(1.0f, 0.3f, 0.3f);
-  for(its = spheres.begin(); its != spheres.end(); its++)
+  // Draw entities
+  for(it = entities.begin(); it != entities.end(); it++)
   {
     glPushMatrix();
-    glTranslatef((*its)->getPosition().x, (*its)->getPosition().y, (*its)->getPosition().z);
-    glutSolidSphere((*its)->getRadius(), 10, 10); 
-    glPopMatrix();
-  }
-
-  // Draw boxes
-  glColor3f(0.3f, 1.0f, 0.3f);
-  for(itb = boxes.begin(); itb != boxes.end(); itb++)
-  {
-    glPushMatrix();
-    glTranslatef((*itb)->getPosition().x, (*itb)->getPosition().y, (*itb)->getPosition().z);
-    glutSolidCube((*itb)->getDimension().x);
+    glTranslatef((*it)->getPosition().x, (*it)->getPosition().y, (*it)->getPosition().z);
+    (*it)->render();
     glPopMatrix();
   }
 

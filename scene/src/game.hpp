@@ -20,10 +20,16 @@ class Game
     void render();
     void update();
     void input(unsigned char key, int x, int y);
+    void mouse(int x, int y);
+    Camera* getCamera();
   private:
     PhysicsManager *pm;
     Timer *timer;
     std::vector<Entity*> entities;
+    std::vector<Camera*> cameras;
+    Camera *camera;
+    float lastx; 
+    float lasty;
 };
 
 #endif

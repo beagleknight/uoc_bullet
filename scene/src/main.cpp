@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <iostream>
-#include <vector>
 #include <GL/glut.h>
 
 #include "game.hpp"
@@ -16,36 +14,16 @@ void reshape(int w, int h);
 void init(int argc, char** argv);
 void update();
 void render();
+void renderAxis();
 void godCamera();
 
-#define GAME_WIDTH 640
-#define GAME_HEIGHT 480
+#define GAME_WIDTH 1024
+#define GAME_HEIGHT 768
 
 Game game;
+bool drawAxis = false;
 
-static float g_lightPos[4] = { 0, 100, 0, 1 };  // Position of light
-int old_x = -1;
-int old_y = -1;
-
-Camera camera2(20, 50, 20, 
-               0, 0, 0, 
-               0, 1, 0);
-Camera camera3(10, 10, 0, 
-               0, 50, 0, 
-               0, 1, 0);
-Camera camera4(-20, 30, -20, 
-               0, 0, 0, 
-               0, 1, 0);
-Camera camera5(20, 100, 0, 
-               0, 0, 0, 
-               0, 1, 0);
-
-Camera *camera = &camera2;
-
-//angle of rotation
-float xpos = 0, ypos = 0, zpos = 0, xrot = 0, yrot = 0;
-float lastx, lasty;
-bool usingGodCamera = false;
+static float g_lightPos[4] = { 0, 100, 0, 1 };
 
 int main (int argc, char** argv) {
   int res_x, res_y, pos_x, pos_y;
@@ -89,24 +67,8 @@ void readKeyboard(unsigned char key, int x, int y)
     case 'w':
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       break;
-    case '1':
-      usingGodCamera = true;
-      break;
-    case '2':
-      camera = &camera2;
-      usingGodCamera = false;
-      break;
-    case '3':
-      camera = &camera3;
-      usingGodCamera = false;
-      break;
-    case '4':
-      camera = &camera4;
-      usingGodCamera = false;
-      break;
-    case '5':
-      camera = &camera5;
-      usingGodCamera = false;
+    case 'a':
+      drawAxis = !drawAxis;
       break;
     default:
       game.input(key, x, y);
@@ -121,36 +83,7 @@ void readUpKeyboard(unsigned char key, int x, int y)
 
 void readSpecialKeyboard(int key, int x, int y)
 {
-  float xrotrad, yrotrad;
-
-  switch(key)
-  {
-    case GLUT_KEY_LEFT:
-      yrotrad = (yrot / 180 * 3.141592654f);
-      xpos -= float(cos(yrotrad)) * 0.2;
-      zpos -= float(sin(yrotrad)) * 0.2;
-      break;
-    case GLUT_KEY_RIGHT:
-      yrotrad = (yrot / 180 * 3.141592654f);
-      xpos += float(cos(yrotrad)) * 0.2;
-      zpos += float(sin(yrotrad)) * 0.2;
-      break;
-    case GLUT_KEY_UP:
-      yrotrad = (yrot / 180 * 3.141592654f);
-      xrotrad = (xrot / 180 * 3.141592654f); 
-      xpos += float(sin(yrotrad)) ;
-      zpos -= float(cos(yrotrad)) ;
-      ypos -= float(sin(xrotrad)) ;
-      break;
-    case GLUT_KEY_DOWN:
-      yrotrad = (yrot / 180 * 3.141592654f);
-      xrotrad = (xrot / 180 * 3.141592654f); 
-      xpos -= float(sin(yrotrad));
-      zpos += float(cos(yrotrad)) ;
-      ypos += float(sin(xrotrad));
-      break;
-  }
-
+  game.input(key, x, y);
   glutPostRedisplay();
 }
 
@@ -161,13 +94,7 @@ void readSpecialUpKeyboard(int key, int x, int y)
 
 void mouseMotion(int x, int y) 
 {
-  int diffx=x-lastx;
-  int diffy=y-lasty;
-  lastx=x;
-  lasty=y;
-  xrot += (float) diffy;
-  yrot += (float) diffx;
-
+  game.mouse(x,y);
   glutPostRedisplay(); 
 }
 
@@ -220,26 +147,12 @@ void render()
 {
   glClear(GL_COLOR_BUFFER_BIT);
   glLoadIdentity();
-
-  if(usingGodCamera)
-    godCamera();
-  else
-    camera->place();
-
   glLightfv(GL_LIGHT0, GL_POSITION, g_lightPos);
 
-  // DrawAxis
-  glBegin(GL_LINES);
-  glColor3f(1.0f, 0.0f, 0.0f);
-  glVertex3f(0.0f, 0.0f, 0.0f);
-  glVertex3f(100.0f, 0.0f, 0.0f);
-  glColor3f(0.0f, 1.0f, 0.0f);
-  glVertex3f(0.0f, 0.0f, 0.0f);
-  glVertex3f(0.0f, 100.0f, 0.0f);
-  glColor3f(0.0f, 0.0f, 1.0f);
-  glVertex3f(0.0f, 0.0f, 0.0f);
-  glVertex3f(0.0f, 0.0f, 100.0f);
-  glEnd();
+  game.getCamera()->place();
+
+  if(drawAxis)
+    renderAxis();
 
   // Draw ground
   glColor3f(0.3f, 1.0f, 0.3f);
@@ -255,8 +168,16 @@ void render()
   glutSwapBuffers();
 }
 
-void godCamera () {
-  glRotatef(xrot,1.0,0.0,0.0);  //rotate our camera on the x-axis (left and right)
-  glRotatef(yrot,0.0,1.0,0.0);  //rotate our camera on the y-axis (up and down)
-  glTranslated(-xpos,-ypos,-zpos); //translate the screen to the position of our camera
+void renderAxis() {
+  glBegin(GL_LINES);
+  glColor3f(1.0f, 0.0f, 0.0f);
+  glVertex3f(0.0f, 0.0f, 0.0f);
+  glVertex3f(100.0f, 0.0f, 0.0f);
+  glColor3f(0.0f, 1.0f, 0.0f);
+  glVertex3f(0.0f, 0.0f, 0.0f);
+  glVertex3f(0.0f, 100.0f, 0.0f);
+  glColor3f(0.0f, 0.0f, 1.0f);
+  glVertex3f(0.0f, 0.0f, 0.0f);
+  glVertex3f(0.0f, 0.0f, 100.0f);
+  glEnd();
 }

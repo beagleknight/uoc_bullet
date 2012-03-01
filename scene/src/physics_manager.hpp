@@ -12,6 +12,7 @@ class PhysicsManager
     void simulate(float dt);
     btRigidBody* createRigidBody(btCollisionShape* shape, btVector3 position, btScalar mass = 1);
     void removeRigidBody(btRigidBody* body);
+    btTypedConstraint* createP2PConstraint(btRigidBody ba, btVector3 pa);
   private:
     btBroadphaseInterface* broadphase;
     btDefaultCollisionConfiguration* collisionConfiguration;

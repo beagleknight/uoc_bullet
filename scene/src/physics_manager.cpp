@@ -62,3 +62,10 @@ void PhysicsManager::removeRigidBody(btRigidBody* body)
   delete body->getMotionState();
   delete body;
 }
+
+btTypedConstraint* PhysicsManager::createP2PConstraint(btRigidBody ba, btVector3 pa)
+{
+  btPoint2PointConstraint* constraint = new btPoint2PointConstraint(ba, pa);
+  dynamicsWorld->addConstraint(constraint);
+  return constraint;
+}

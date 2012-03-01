@@ -11,6 +11,7 @@
 #include "sphere.hpp"
 #include "box.hpp"
 #include "ground.hpp"
+#include "capsule.hpp"
 
 class Game
 {

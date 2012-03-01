@@ -28,6 +28,9 @@ Game::~Game()
 
 void Game::init()
 {
+  Ground *ground;
+  Capsule *capsule;
+
   pm = new PhysicsManager();
 
   timer = new Timer();
@@ -44,7 +47,8 @@ void Game::init()
 
   // Load scene
   // Ground
-  entities.push_back(new Ground(pm, btVector3(0, -1, 0), btVector3(0, 1, 0)));
+  ground = new Ground(pm, btVector3(0, -1, 0), btVector3(0, 1, 0));
+  entities.push_back(ground);
   // Boxes
   entities.push_back(new Box(pm, btVector3(0, 5, 0), btVector3(5, 5, 5)));
   entities.push_back(new Box(pm, btVector3(0, 5, 10), btVector3(5, 5, 5)));
@@ -60,6 +64,11 @@ void Game::init()
   entities.push_back(new Sphere(pm, btVector3(20, 15, 10), 5));
   entities.push_back(new Sphere(pm, btVector3(10, 15, 20), 5));
   entities.push_back(new Sphere(pm, btVector3(20, 15, 20), 5));
+  // Capsules
+  capsule = new Capsule(pm, btVector3(30, 4, 30), 2, 4);
+  //TODO: constraints
+  //pm->createP2PConstraint(*(capsule->getBody()), btVector3(30, -1, 30));
+  entities.push_back(capsule);
 }
 
 void Game::render()
@@ -88,6 +97,7 @@ void Game::input(unsigned char key, int x, int y)
 {
   Sphere *sphere;
   Box *box;
+  Capsule *capsule;
   int randx, randz;
   int boxsize = rand() % 10 + 1 ;
   randx = rand() % 50 + 1;
@@ -105,10 +115,15 @@ void Game::input(unsigned char key, int x, int y)
       entities.push_back(sphere);
       break;
     case 'x':
-      box = new Box(pm, btVector3(randx, 50, randz), btVector3(boxsize, boxsize, boxsize));
+      box = new Box(pm, btVector3(eye.getX(), eye.getY(), eye.getZ()), 
+                    btVector3(boxsize, boxsize, boxsize));
       shootBody(box->getBody(), eye, direction); 
       entities.push_back(box);
       break;
+    case 'c':
+      capsule = new Capsule(pm, btVector3(eye.getX(), eye.getY(), eye.getZ()), 2, 4);
+      shootBody(capsule->getBody(), eye, direction);
+      entities.push_back(capsule);
     case '2':
       camera = cameras[0];
       break;

@@ -16,8 +16,7 @@ void Ground::render()
 {
   float size = 300;
 
-  // Draw ground
-  glColor3f(0.3f, 1.0f, 0.3f);
+  glColor3f(color.getX(), color.getY(), color.getZ());
   glBegin(GL_QUADS);
   glVertex3f(-size, 0, size);
   glVertex3f(size, 0, size);

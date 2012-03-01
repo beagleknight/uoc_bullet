@@ -4,15 +4,15 @@ Camera::Camera(float ex, float ey, float ez,
                float cx, float cy, float cz, 
                float ux, float uy, float uz)
 {
-  eye.x = ex;
-  eye.y = ey;
-  eye.z = ez;
-  center.x = cx;
-  center.y = cy;
-  center.z = cz;
-  up.x = ux;
-  up.y = uy;
-  up.z = uz;
+  eye.setX(ex);
+  eye.setY(ey);
+  eye.setZ(ez);
+  center.setX(cx);
+  center.setY(cy);
+  center.setZ(cz);
+  up.setX(ux);
+  up.setY(uy);
+  up.setZ(uz);
 }
 
 Camera::~Camera()
@@ -23,44 +23,44 @@ Camera::~Camera()
 void Camera::place()
 {
   gluLookAt(
-    eye.x, eye.y, eye.z,
-    center.x, center.y, center.z,
-    up.x, up.y, up.z 
+    eye.getX(), eye.getY(), eye.getZ(),
+    center.getX(), center.getY(), center.getZ(),
+    up.getX(), up.getY(), up.getZ() 
   );
 }
 
 void Camera::setEye(float x, float y, float z)
 {
-  eye.x = x;
-  eye.y = y;
-  eye.z = z;
+  eye.setX(x);
+  eye.setY(y);
+  eye.setZ(z);
 }
 
-Vector3 Camera::getEye()
+btVector3 Camera::getEye()
 {
   return eye;
 }
 
 void Camera::setCenter(float x, float y, float z)
 {
-  center.x = x;
-  center.y = y;
-  center.z = z;
+  center.setX(x);
+  center.setY(y);
+  center.setZ(z);
 }
 
-Vector3 Camera::getCenter()
+btVector3 Camera::getCenter()
 {
   return center;
 }
 
 void Camera::setUp(float x, float y, float z)
 {
-  up.x = x;
-  up.y = y;
-  up.z = z;
+  up.setX(x);
+  up.setY(y);
+  up.setZ(z);
 }
 
-Vector3 Camera::getUp()
+btVector3 Camera::getUp()
 {
   return up;
 }

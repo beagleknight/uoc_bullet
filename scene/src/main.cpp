@@ -72,6 +72,7 @@ void readKeyboard(unsigned char key, int x, int y)
       break;
     default:
       game.input(key, x, y);
+      break;
   }
   glutPostRedisplay();
 }
@@ -111,6 +112,8 @@ void init(int argc, char** argv)
   glEnable(GL_LIGHT0);
   glEnable(GL_COLOR_MATERIAL);
 
+  glEnable(GL_DEPTH_TEST);
+
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
 
@@ -145,7 +148,7 @@ void update()
 
 void render()
 {
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
   glLightfv(GL_LIGHT0, GL_POSITION, g_lightPos);
 

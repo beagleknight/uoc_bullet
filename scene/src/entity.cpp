@@ -3,9 +3,9 @@
 Entity::Entity(PhysicsManager* _pm)
 {
   pm = _pm;
-  color = Vector3((float)rand()/(float)RAND_MAX, 
-                  (float)rand()/(float)RAND_MAX, 
-                  (float)rand()/(float)RAND_MAX);
+  color = btVector3((float)rand()/(float)RAND_MAX, 
+                   (float)rand()/(float)RAND_MAX, 
+                   (float)rand()/(float)RAND_MAX);
 }
 
 Entity::~Entity()
@@ -14,9 +14,20 @@ Entity::~Entity()
     pm->removeRigidBody(body);
 }
 
-Vector3 Entity::getPosition()
+btVector3 Entity::getPosition()
 {
   btTransform trans;
   body->getMotionState()->getWorldTransform(trans);
-  return Vector3(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
+  return trans.getOrigin();
+}
+
+void Entity::setPosition(btVector3 position)
+{
+  btTransform trans(btQuaternion(0,0,0,1), position);
+  body->getMotionState()->setWorldTransform(trans);
+}
+
+btRigidBody* Entity::getBody()
+{
+  return body;
 }

@@ -1,23 +1,25 @@
 #include "sphere.hpp"
 
-Sphere::Sphere(PhysicsManager* _pm, Vector3 position, int _radius) : Entity(_pm)
+Sphere::Sphere(PhysicsManager* _pm, btVector3 position, int _radius) : Entity(_pm)
 {
   radius = _radius;
-  createBody(position);
+  createPhysicsBody(position);
 }
 
 Sphere::~Sphere()
 {
+  delete shape;
 }
 
-void Sphere::createBody(Vector3 position)
+void Sphere::createPhysicsBody(btVector3 position)
 {
-  body = pm->createSphereBody(radius, position);
+  shape = new btSphereShape(radius);
+  body = pm->createRigidBody(shape, position);
 }
 
 void Sphere::render()
 {
-  glColor3f(color.x, color.y, color.z);
+  glColor3f(color.getX(), color.getY(), color.getZ());
   glutSolidSphere(radius, 10, 10); 
 }
 

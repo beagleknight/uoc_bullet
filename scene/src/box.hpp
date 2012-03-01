@@ -3,19 +3,19 @@
 
 #include <GL/glut.h>
 #include "entity.hpp"
-#include "vector3.hpp"
 
 class Box : public Entity
 {
   public:
-    Box(PhysicsManager* _pm, Vector3 position, Vector3 _dimension);
+    Box(PhysicsManager* _pm, btVector3 position, btVector3 _dimension);
     ~Box();
     void render();
     void update(float dt);
-    Vector3 getDimension();
+    btVector3 getDimension();
   private:
-    void createBody(Vector3 position);
-    Vector3 dimension;
+    void createPhysicsBody(btVector3 position);
+    btBoxShape* shape;
+    btVector3 dimension;
 };
 
 #endif

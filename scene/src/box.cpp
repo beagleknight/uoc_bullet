@@ -1,30 +1,33 @@
 #include "box.hpp"
 
-Box::Box(PhysicsManager* _pm, Vector3 position, Vector3 _dimension) : Entity(_pm)
+Box::Box(PhysicsManager* _pm, btVector3 position, btVector3 _dimension) : Entity(_pm)
 {
   dimension = _dimension;
-  createBody(position);
+  createPhysicsBody(position);
 }
 
 Box::~Box()
 {
+  delete shape;
 }
 
-void Box::createBody(Vector3 position)
+void Box::createPhysicsBody(btVector3 position)
 {
-  body = pm->createBoxBody(dimension, position);
+  shape = new btBoxShape(dimension);
+  body = pm->createRigidBody(shape, position);
 }
 
 void Box::render()
 {
-  glutSolidCube(dimension.x);
+  glColor3f(color.getX(), color.getY(), color.getZ());
+  glutSolidCube(dimension.getX()*2);
 }
 
 void Box::update(float dt)
 {
 }
 
-Vector3 Box::getDimension()
+btVector3 Box::getDimension()
 {
   return dimension;
 }

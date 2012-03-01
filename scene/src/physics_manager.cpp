@@ -48,23 +48,12 @@ void PhysicsManager::simulate(float dt)
   dynamicsWorld->stepSimulation(dt,10);
 }
 
-btRigidBody* PhysicsManager::createSphereBody(int radius, Vector3 position)
-{
-  return createRigidBody(new btSphereShape(radius), position);
-}
-
-btRigidBody* PhysicsManager::createBoxBody(Vector3 dimension, Vector3 position)
-{
-  return createRigidBody(new btBoxShape(dimension.toBtVector3()), position);
-}
-
-btRigidBody* PhysicsManager::createRigidBody(btCollisionShape* shape, Vector3 position)
+btRigidBody* PhysicsManager::createRigidBody(btCollisionShape* shape, btVector3 position)
 {
   btDefaultMotionState* motionState;
   btRigidBody* rigidBody;
 
-  motionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
-                                         position.toBtVector3()));
+  motionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1), position));
 
   btScalar mass = 1; // 1kg
   btVector3 inertia(0,0,0);
@@ -81,7 +70,6 @@ void PhysicsManager::removeRigidBody(btRigidBody* body)
 {
   // Delete sphere
   dynamicsWorld->removeRigidBody(body);
-  delete body->getCollisionShape();
   delete body->getMotionState();
   delete body;
 }

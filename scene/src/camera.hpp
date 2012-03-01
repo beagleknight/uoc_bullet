@@ -1,5 +1,5 @@
-#include "vector3.hpp"
 #include <GL/glut.h>
+#include "physics_manager.hpp"
 
 class Camera
 {
@@ -10,13 +10,13 @@ class Camera
     ~Camera();
     void place();
     void setEye(float x, float y, float z);
-    Vector3 getEye();
+    btVector3 getEye();
     void setCenter(float x, float y, float z);
-    Vector3 getCenter();
+    btVector3 getCenter();
     void setUp(float x, float y, float z);
-    Vector3 getUp();
+    btVector3 getUp();
   private:
-    Vector3 eye;    
-    Vector3 center;    
-    Vector3 up;    
+    btVector3 eye;    
+    btVector3 center;    
+    btVector3 up;    
 };

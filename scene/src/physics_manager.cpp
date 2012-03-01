@@ -15,16 +15,6 @@ PhysicsManager::PhysicsManager()
   // The world.
   dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
   dynamicsWorld->setGravity(btVector3(0,-10,0));
-
-  // Create a ground shape at Y = 1
-  groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);
-  groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,-1,0)));
-  // Create a ground body with infinite mass
-  btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));
-  groundRigidBody = new btRigidBody(groundRigidBodyCI);
-  // Add ground to the world
-  dynamicsWorld->addRigidBody(groundRigidBody);
-
 }
 
 PhysicsManager::~PhysicsManager()
@@ -48,14 +38,13 @@ void PhysicsManager::simulate(float dt)
   dynamicsWorld->stepSimulation(dt,10);
 }
 
-btRigidBody* PhysicsManager::createRigidBody(btCollisionShape* shape, btVector3 position)
+btRigidBody* PhysicsManager::createRigidBody(btCollisionShape* shape, btVector3 position, btScalar mass)
 {
   btDefaultMotionState* motionState;
   btRigidBody* rigidBody;
 
   motionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1), position));
 
-  btScalar mass = 1; // 1kg
   btVector3 inertia(0,0,0);
   shape->calculateLocalInertia(mass,inertia);
 

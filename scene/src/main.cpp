@@ -157,15 +157,6 @@ void render()
   if(drawAxis)
     renderAxis();
 
-  // Draw ground
-  glColor3f(0.3f, 1.0f, 0.3f);
-  glBegin(GL_QUADS);
-  glVertex3f(-50, 0, 50);
-  glVertex3f(50, 0, 50);
-  glVertex3f(50, 0, -50);
-  glVertex3f(-50, 0, -50);
-  glEnd();
-
   game.render();
 
   glutSwapBuffers();

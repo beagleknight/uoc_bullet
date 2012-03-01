@@ -1,5 +1,7 @@
 #include "game.hpp"
 
+void shootBody(btRigidBody* body, btVector3 origin, btVector3 velocity);
+
 Game::Game()
 {
   pm = 0;
@@ -41,6 +43,9 @@ void Game::init()
   camera = cameras[0];
 
   // Load scene
+  // Ground
+  entities.push_back(new Ground(pm, btVector3(0, -1, 0), btVector3(0, 1, 0)));
+  // Boxes
   entities.push_back(new Box(pm, btVector3(0, 5, 0), btVector3(5, 5, 5)));
   entities.push_back(new Box(pm, btVector3(0, 5, 10), btVector3(5, 5, 5)));
   entities.push_back(new Box(pm, btVector3(0, 5, 20), btVector3(5, 5, 5)));
@@ -50,6 +55,7 @@ void Game::init()
   entities.push_back(new Box(pm, btVector3(20, 5, 0), btVector3(5, 5, 5)));
   entities.push_back(new Box(pm, btVector3(20, 5, 10), btVector3(5, 5, 5)));
   entities.push_back(new Box(pm, btVector3(20, 5, 20), btVector3(5, 5, 5)));
+  // Spheres
   entities.push_back(new Sphere(pm, btVector3(10, 15, 10), 5));
   entities.push_back(new Sphere(pm, btVector3(20, 15, 10), 5));
   entities.push_back(new Sphere(pm, btVector3(10, 15, 20), 5));
@@ -95,30 +101,12 @@ void Game::input(unsigned char key, int x, int y)
   switch(key) {
     case 'z':
       sphere = new Sphere(pm, btVector3(eye.getX(), eye.getY(), eye.getZ()), rand() % 5 + 1);
-      body = sphere->getBody();
-
-      body->setLinearFactor(btVector3(1,1,1));
-      body->getWorldTransform().setOrigin(eye);
-      body->getWorldTransform().setRotation(btQuaternion(0,0,0,1));
-      body->setLinearVelocity(direction);
-      body->setAngularVelocity(btVector3(0,0,0));
-      body->setCcdMotionThreshold(0.5);
-      body->setCcdSweptSphereRadius(0.9f);
-
+      shootBody(sphere->getBody(), eye, direction); 
       entities.push_back(sphere);
       break;
     case 'x':
       box = new Box(pm, btVector3(randx, 50, randz), btVector3(boxsize, boxsize, boxsize));
-      body = box->getBody();
-      
-      body->setLinearFactor(btVector3(1,1,1));
-      body->getWorldTransform().setOrigin(eye);
-      body->getWorldTransform().setRotation(btQuaternion(0,0,0,1));
-      body->setLinearVelocity(direction);
-      body->setAngularVelocity(btVector3(0,0,0));
-      body->setCcdMotionThreshold(0.5);
-      body->setCcdSweptSphereRadius(0.9f);
-
+      shootBody(box->getBody(), eye, direction); 
       entities.push_back(box);
       break;
     case '2':
@@ -182,4 +170,15 @@ void Game::mouse(int x, int y)
 Camera* Game::getCamera()
 {
   return camera;
+}
+
+void shootBody(btRigidBody* body, btVector3 origin, btVector3 velocity)
+{
+  body->setLinearFactor(btVector3(1,1,1));
+  body->getWorldTransform().setOrigin(origin);
+  body->getWorldTransform().setRotation(btQuaternion(0,0,0,1));
+  body->setLinearVelocity(velocity);
+  body->setAngularVelocity(btVector3(0,0,0));
+  body->setCcdMotionThreshold(0.5);
+  body->setCcdSweptSphereRadius(0.9f);
 }

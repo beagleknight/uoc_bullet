@@ -13,6 +13,9 @@ Camera::Camera(float ex, float ey, float ez,
   up.setX(ux);
   up.setY(uy);
   up.setZ(uz);
+
+  yaw = 0;
+  pitch = 0;
 }
 
 Camera::~Camera()
@@ -27,6 +30,11 @@ void Camera::place()
     center.getX(), center.getY(), center.getZ(),
     up.getX(), up.getY(), up.getZ() 
   );
+}
+
+void Camera::input(unsigned char key, int x, int y)
+{
+
 }
 
 void Camera::setEye(float x, float y, float z)
@@ -63,4 +71,14 @@ void Camera::setUp(float x, float y, float z)
 btVector3 Camera::getUp()
 {
   return up;
+}
+
+void Camera::addYaw(float _yaw)
+{
+  yaw += _yaw;
+}
+
+void Camera::addPitch(float _pitch)
+{
+  pitch += _pitch;
 }

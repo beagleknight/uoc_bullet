@@ -18,9 +18,13 @@ void Ground::render()
 
   glColor3f(color.getX(), color.getY(), color.getZ());
   glBegin(GL_QUADS);
+  glNormal3f(0, 1, 0);
   glVertex3f(-size, 0, size);
+  glNormal3f(0, 1, 0);
   glVertex3f(size, 0, size);
+  glNormal3f(0, 1, 0);
   glVertex3f(size, 0, -size);
+  glNormal3f(0, 1, 0);
   glVertex3f(-size, 0, -size);
   glEnd();
 }

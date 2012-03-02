@@ -23,8 +23,6 @@ void godCamera();
 Game game;
 bool drawAxis = false;
 
-static float g_lightPos[4] = { 0, 100, 0, 1 };
-
 int main (int argc, char** argv) {
   int res_x, res_y, pos_x, pos_y;
 
@@ -70,11 +68,8 @@ void readKeyboard(unsigned char key, int x, int y)
     case 'a':
       drawAxis = !drawAxis;
       break;
-    default:
-      game.input(key, x, y);
-      break;
   }
-  glutPostRedisplay();
+  game.input(key, x, y);
 }
 
 void readUpKeyboard(unsigned char key, int x, int y)
@@ -85,37 +80,45 @@ void readUpKeyboard(unsigned char key, int x, int y)
 void readSpecialKeyboard(int key, int x, int y)
 {
   game.input(key, x, y);
-  glutPostRedisplay();
 }
 
 void readSpecialUpKeyboard(int key, int x, int y)
 {
-  glutPostRedisplay();
 }
 
 void mouseMotion(int x, int y) 
 {
   game.mouse(x,y);
-  glutPostRedisplay(); 
 }
 
 void init(int argc, char** argv)
 {
   srand(time(NULL));
 
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2), btScalar(1.0) };
+	GLfloat light_diffuse[] = { btScalar(1.0), btScalar(1.0), btScalar(1.0), btScalar(1.0) };
+	GLfloat light_specular[] = { btScalar(1.0), btScalar(1.0), btScalar(1.0), btScalar(1.0 )};
+	GLfloat light_position0[] = { btScalar(1.0), btScalar(10.0), btScalar(1.0), btScalar(0.0 )};
+	GLfloat light_position1[] = { btScalar(-1.0), btScalar(-10.0), btScalar(-1.0), btScalar(0.0) };
 
-  glAlphaFunc(GL_GREATER, 0.05f);
-  glEnable(GL_ALPHA_TEST);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
 
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
   glEnable(GL_COLOR_MATERIAL);
 
-  glEnable(GL_DEPTH_TEST);
-
-  glCullFace(GL_BACK);
-  glEnable(GL_CULL_FACE);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
   glutSetCursor(GLUT_CURSOR_NONE);
 
@@ -133,11 +136,9 @@ void reshape(int w, int h)
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(90,aspectRatio,1,1000);
+  gluPerspective(60,aspectRatio,1,400);
 
   glMatrixMode (GL_MODELVIEW);
-
-  glutPostRedisplay();
 }
 
 void update()
@@ -150,7 +151,6 @@ void render()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  glLightfv(GL_LIGHT0, GL_POSITION, g_lightPos);
 
   game.getCamera()->place();
 

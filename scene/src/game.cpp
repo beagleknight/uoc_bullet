@@ -36,10 +36,9 @@ void Game::init()
   timer = new Timer();
   timer->init();
 
-  //TODO: godcamera
-  //cameras.push_back(new Camera(20, 50, 20, 0, 0, 0, 0, 1, 0));
+  cameras.push_back(new GodCamera(50, 5, 50, 0, 0, 0, 0, 1, 0));
   cameras.push_back(new Camera(50, 30, 50, 0, 0, 0, 0, 1, 0));
-  cameras.push_back(new Camera(10, 10, 0, 0, 50, 0, 0, 1, 0));
+  cameras.push_back(new Camera(100, 50, 100, 0, 0, 0, 0, 1, 0));
   cameras.push_back(new Camera(-20, 30, -20, 0, 0, 0, 0, 1, 0));
   cameras.push_back(new Camera(20, 100, 0, 0, 0, 0, 0, 1, 0));
 
@@ -65,10 +64,10 @@ void Game::init()
   entities.push_back(new Sphere(pm, btVector3(10, 15, 20), 5));
   entities.push_back(new Sphere(pm, btVector3(20, 15, 20), 5));
   // Capsules
-  capsule = new Capsule(pm, btVector3(30, 4, 30), 2, 4);
-  //TODO: constraints
-  //pm->createP2PConstraint(*(capsule->getBody()), btVector3(30, -1, 30));
-  entities.push_back(capsule);
+  entities.push_back(new Capsule(pm, btVector3(30, 4, 30), 2, 4));
+  entities.push_back(new Capsule(pm, btVector3(30, 4, -30), 2, 4));
+  entities.push_back(new Capsule(pm, btVector3(-30, 4, 30), 2, 4));
+  entities.push_back(new Capsule(pm, btVector3(-30, 4, -30), 2, 4));
 }
 
 void Game::render()
@@ -124,50 +123,24 @@ void Game::input(unsigned char key, int x, int y)
       capsule = new Capsule(pm, btVector3(eye.getX(), eye.getY(), eye.getZ()), 2, 4);
       shootBody(capsule->getBody(), eye, direction);
       entities.push_back(capsule);
-    case '2':
+      break;
+    case '1':
       camera = cameras[0];
       break;
-    case '3':
+    case '2':
       camera = cameras[1];
       break;
-    case '4':
+    case '3':
       camera = cameras[2];
       break;
-    case '5':
+    case '4':
       camera = cameras[3];
       break;
+    case '5':
+      camera = cameras[4];
+      break;
   }
-
-  //TODO: godcamera
-  //float xrotrad, yrotrad;
-
-  //switch(key)
-  //{
-  //  case GLUT_KEY_LEFT:
-  //    yrotrad = (yrot / 180 * 3.141592654f);
-  //    xpos -= float(cos(yrotrad)) * 0.2;
-  //    zpos -= float(sin(yrotrad)) * 0.2;
-  //    break;
-  //  case GLUT_KEY_RIGHT:
-  //    yrotrad = (yrot / 180 * 3.141592654f);
-  //    xpos += float(cos(yrotrad)) * 0.2;
-  //    zpos += float(sin(yrotrad)) * 0.2;
-  //    break;
-  //  case GLUT_KEY_UP:
-  //    yrotrad = (yrot / 180 * 3.141592654f);
-  //    xrotrad = (xrot / 180 * 3.141592654f); 
-  //    xpos += float(sin(yrotrad)) ;
-  //    zpos -= float(cos(yrotrad)) ;
-  //    ypos -= float(sin(xrotrad)) ;
-  //    break;
-  //  case GLUT_KEY_DOWN:
-  //    yrotrad = (yrot / 180 * 3.141592654f);
-  //    xrotrad = (xrot / 180 * 3.141592654f); 
-  //    xpos -= float(sin(yrotrad));
-  //    zpos += float(cos(yrotrad)) ;
-  //    ypos += float(sin(xrotrad));
-  //    break;
-  //}
+  camera->input(key, x, y);
 }
 
 void Game::mouse(int x, int y)
@@ -177,9 +150,8 @@ void Game::mouse(int x, int y)
   lastx = x;
   lasty = y;
 
-  //TODO: godcamera
-  //camera->addYaw((float) diffy);
-  //camera->addPitch((float) diffx);
+  camera->addPitch((float) diffy);
+  camera->addYaw((float) diffx);
 }
 
 Camera* Game::getCamera()

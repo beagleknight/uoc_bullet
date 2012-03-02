@@ -1,18 +1,17 @@
-== Resumen de la PEC
+== Controles
 
+[Todos]
 - Navegación en modo dios por el escenario: tecla 1 
+  * Flechas para movimiento
+  * Ratón para rotar la vista
 - Cámaras fijas: 2, 3, 4, 5
 - Visualización sólido (s) y wireframe (w)
 
-- Motores libres: ODE, Newton, Physx, ...
+[Solo en proyecto Scene]
+- Lanzar objetos: esferas (z), cajas (x) y capsulas (c)
 
-- Ejercicio documental de unas 10 págs donde se presente de manera esquemática la solución escogida, características, pros y contras.
-- Proyecto HelloWorld
-- Proyecto Scene: Carga de un escenario con entidades físicas que interactúen entre ellas.
-- Proyecto Game: Realizar un mini juego 3D con OpenGL, física papel primordial. No debemos preocuparnos del aspecto gráfico.
-
-- Entrega:
- * src (.cpp, .h, .vcproj)
- * bin (ejecutables, recursos, dlls, texturas, modelos 3D, etc.)
- * biblio.txt (fuentes consultadas, codigo externo)
- * demo.avi (<1min o varios pequeños)
+[Solo en proyecto AngryBoxes]
+- Mover pieza izquierda (h)
+- Mover pieza derecha (l)
+- Mover pieza adelante (k)
+- Mover pieza atrás (j)

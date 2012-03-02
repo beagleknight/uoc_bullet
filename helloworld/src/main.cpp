@@ -15,8 +15,8 @@ void update();
 void render();
 void godCamera();
 
-#define GAME_WIDTH 640
-#define GAME_HEIGHT 480
+#define GAME_WIDTH 1024
+#define GAME_HEIGHT 768
 
 PhysicsManager *pm = new PhysicsManager();
 Timer *timer = new Timer();
